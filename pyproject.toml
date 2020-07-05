@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 99
+target-version = ["py38"]
+exclude = '''
+/(
+    \.git|.venv
+)/
+'''
+
+[tool.isort]
+from_first = true
