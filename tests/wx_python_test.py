@@ -1,6 +1,12 @@
+import textwrap
+
 from libcst.codemod import CodemodTest
 
-from codemods.wx_python import ColorToColourCommand, ConstantsRenameCommand
+from codemods.wx_python import (
+    ColorToColourCommand,
+    ConstantsRenameCommand,
+    FixImportFromAdvCommand,
+)
 
 
 class ColorToColourCommandTests(CodemodTest):
@@ -57,5 +63,76 @@ class ConstantsRenameCommandTests(CodemodTest):
     def test_FILE_MUST_EXIST_substitution(self) -> None:
         before = "wx.FILE_MUST_EXIST"
         after = "wx.FD_FILE_MUST_EXIST"
+
+        self.assertCodemod(before, after)
+
+
+class FixImportFromAdvCommandTests(CodemodTest):
+
+    TRANSFORM = FixImportFromAdvCommand
+
+    def test_add_import_once_substitution(self) -> None:
+        before = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.DP_ALLOWNONE
+            """
+        )
+        after = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.adv.DP_ALLOWNONE
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+    def test_constants_DP_ALLOWNONE_substitution(self) -> None:
+        before = "wx.DP_ALLOWNONE"
+        after = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.adv.DP_ALLOWNONE
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+    def test_constants_DP_DROPDOWN_substitution(self) -> None:
+        before = "wx.DP_DROPDOWN"
+        after = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.adv.DP_DROPDOWN
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+    def test_constants_DP_SHOWCENTURY_substitution(self) -> None:
+        before = "wx.DP_SHOWCENTURY"
+        after = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.adv.DP_SHOWCENTURY
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+    def test_symbols_DatePickerCtrl_substitution(self) -> None:
+        before = "wx.DatePickerCtrl"
+        after = textwrap.dedent(
+            """
+            import wx.adv
+
+            wx.adv.DatePickerCtrl
+            """
+        )
 
         self.assertCodemod(before, after)

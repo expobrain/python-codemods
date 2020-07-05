@@ -50,3 +50,28 @@ class ConstantsRenameCommand(VisitorBasedCodemodCommand):
                 return updated_node.with_changes(attr=cst.Name(value=renamed))
 
         return updated_node
+
+
+class FixImportFromAdvCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Fix importing symbols now moved into wx.adv package"
+
+    matchers = [
+        matchers.Attribute(value=matchers.Name(value="wx"), attr=matchers.Name(value=name))
+        for name in ["DatePickerCtrl", "DP_ALLOWNONE", "DP_DROPDOWN", "DP_SHOWCENTURY"]
+    ]
+
+    def leave_Attribute(
+        self, original_node: cst.Attribute, updated_node: cst.Attribute
+    ) -> cst.Attribute:
+        for matcher in self.matchers:
+            if matchers.matches(updated_node, matcher):
+                # Ensure that wx.adv is imported
+                AddImportsVisitor.add_needed_import(self.context, "wx.adv")
+
+                # Return modified node
+                return updated_node.with_changes(
+                    value=cst.Attribute(value=cst.Name(value="wx"), attr=cst.Name(value="adv"))
+                )
+
+        return updated_node
