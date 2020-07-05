@@ -75,3 +75,23 @@ class FixImportFromAdvCommand(VisitorBasedCodemodCommand):
                 )
 
         return updated_node
+
+
+class FlexGridSizerCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Updates wx.FlexGridSize constructor's calls"
+
+    matcher = matchers.Call(
+        func=matchers.Attribute(
+            value=matchers.Name(value="wx"), attr=matchers.Name(value="FlexGridSizer")
+        ),
+        args=[matchers.DoNotCare(), matchers.DoNotCare()],
+    )
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        if matchers.matches(updated_node, self.matcher):
+            return updated_node.with_changes(
+                args=[*updated_node.args, cst.Arg(value=cst.Integer(value="0"))]
+            )
+
+        return updated_node

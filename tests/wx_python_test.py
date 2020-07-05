@@ -6,6 +6,7 @@ from codemods.wx_python import (
     ColorToColourCommand,
     ConstantsRenameCommand,
     FixImportFromAdvCommand,
+    FlexGridSizerCommand,
 )
 
 
@@ -134,5 +135,22 @@ class FixImportFromAdvCommandTests(CodemodTest):
             wx.adv.DatePickerCtrl
             """
         )
+
+        self.assertCodemod(before, after)
+
+
+class FlexGridSizerCommandTests(CodemodTest):
+
+    TRANSFORM = FlexGridSizerCommand
+
+    def test_no_op(self) -> None:
+        before = "wx.FlexGridSizer(1, 0, 0)"
+        after = "wx.FlexGridSizer(1, 0, 0)"
+
+        self.assertCodemod(before, after)
+
+    def test_substitution(self) -> None:
+        before = "wx.FlexGridSizer(1, 0)"
+        after = "wx.FlexGridSizer(1, 0, 0)"
 
         self.assertCodemod(before, after)
