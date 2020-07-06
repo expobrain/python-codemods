@@ -71,6 +71,12 @@ class ConstantsRenameCommandTests(CodemodTest):
 
         self.assertCodemod(before, after)
 
+    def test_TE_LINEWRAP_substitution(self) -> None:
+        before = "wx.TE_LINEWRAP"
+        after = "wx.TE_BESTWRAP"
+
+        self.assertCodemod(before, after)
+
 
 class FixImportFromAdvCommandTests(CodemodTest):
 

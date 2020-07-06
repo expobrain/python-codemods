@@ -40,6 +40,7 @@ class ConstantsRenameCommand(VisitorBasedCodemodCommand):
             ("WXK_NUMPAD_NEXT", "WXK_NUMPAD_PAGEDOWN"),
             ("OPEN", "FD_OPEN"),
             ("FILE_MUST_EXIST", "FD_FILE_MUST_EXIST"),
+            ("TE_LINEWRAP", "TE_BESTWRAP"),
         ]
     }
 
