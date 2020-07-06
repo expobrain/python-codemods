@@ -7,6 +7,7 @@ from codemods.wx_python import (
     ConstantsRenameCommand,
     FixImportFromAdvCommand,
     FlexGridSizerCommand,
+    MakeModalCommand,
     MenuAppendCommand,
     ToolbarAddToolCommand,
 )
@@ -208,6 +209,73 @@ class ToolbarAddToolCommandTests(CodemodTest):
                 toolId=1,
                 label="Toolbar tool"
             )
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+
+class MakeModalCommandTests(CodemodTest):
+
+    TRANSFORM = MakeModalCommand
+
+    def test_substitution(self) -> None:
+        before = textwrap.dedent(
+            """
+            class MyModal(wx.Frame):
+                def __init__(self):
+                    super().__init__()
+
+                    self.MakeModal()
+            """
+        )
+        after = textwrap.dedent(
+            """
+            class MyModal(wx.Frame):
+                def __init__(self):
+                    super().__init__()
+
+                    self.MakeModal()
+
+                def MakeModal(self, modal=True):
+                    if modal and not hasattr(self, '_disabler'):
+                        self._disabler = wx.WindowDisabler(self)
+                    if not modal and hasattr(self, '_disabler'):
+                        del self._disabler
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+    def test_no_op(self) -> None:
+        before = textwrap.dedent(
+            """
+            class MyModal(wx.Frame):
+                def __init__(self):
+                    super().__init__()
+
+                    self.MakeModal()
+
+                def MakeModal(self, modal=True):
+                    if modal and not hasattr(self, '_disabler'):
+                        self._disabler = wx.WindowDisabler(self)
+                    if not modal and hasattr(self, '_disabler'):
+                        del self._disabler
+            """
+        )
+        after = textwrap.dedent(
+            """
+            class MyModal(wx.Frame):
+                def __init__(self):
+                    super().__init__()
+
+                    self.MakeModal()
+
+                def MakeModal(self, modal=True):
+                    if modal and not hasattr(self, '_disabler'):
+                        self._disabler = wx.WindowDisabler(self)
+                    if not modal and hasattr(self, '_disabler'):
+                        del self._disabler
             """
         )
 

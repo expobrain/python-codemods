@@ -1,5 +1,6 @@
 from ast import literal_eval
-from typing import Union
+from typing import List, Optional, Union
+import textwrap
 
 from libcst import matchers
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
@@ -171,5 +172,69 @@ class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
                         )
 
                 updated_node = updated_node.with_changes(args=updated_node_args)
+
+        return updated_node
+
+
+class MakeModalCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Replace built-in method MAkeModal with helper"
+
+    method_matcher = matchers.FunctionDef(
+        name=matchers.Name(value="MakeModal"),
+        params=matchers.Parameters(
+            params=[matchers.Param(name=matchers.Name(value="self")), matchers.ZeroOrMore()]
+        ),
+    )
+    call_matcher = matchers.Call(
+        func=matchers.Attribute(
+            value=matchers.Name(value="self"), attr=matchers.Name(value="MakeModal")
+        )
+    )
+
+    method_cst = cst.parse_statement(
+        textwrap.dedent(
+            """
+            def MakeModal(self, modal=True):
+                if modal and not hasattr(self, '_disabler'):
+                    self._disabler = wx.WindowDisabler(self)
+                if not modal and hasattr(self, '_disabler'):
+                    del self._disabler
+            """
+        )
+    )
+
+    def __init__(self, context: CodemodContext):
+        super().__init__(context)
+
+        self.stack: List[cst.ClassDef] = []
+
+    def visit_ClassDef(self, node: cst.ClassDef):
+        self.stack.append(node)
+
+    def leave_ClassDef(
+        self, original_node: cst.ClassDef, updated_node: cst.ClassDef
+    ) -> cst.ClassDef:
+        return self.stack.pop()
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        if matchers.matches(updated_node, self.call_matcher):
+            # Search for MakeModal() method
+            current_class = self.stack[-1]
+            has_make_modal_method = False
+
+            for method in current_class.body.body:
+                if matchers.matches(method, self.method_matcher):
+                    has_make_modal_method = True
+
+            # If not, add it to the current class
+            if not has_make_modal_method:
+                current_class = current_class.with_changes(
+                    body=current_class.body.with_changes(
+                        body=[*current_class.body.body, self.method_cst]
+                    )
+                )
+
+                self.stack[-1] = current_class
 
         return updated_node
