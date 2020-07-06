@@ -176,6 +176,21 @@ class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
         return updated_node
 
 
+class SizerAddCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Transforms wx.Sizer.AddWindow method into Add"
+
+    matcher = matchers.Call(func=matchers.Attribute(attr=matchers.Name(value="AddWindow")))
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        if matchers.matches(updated_node, self.matcher):
+            return updated_node.with_changes(
+                func=updated_node.func.with_changes(attr=cst.Name(value="Add"))
+            )
+
+        return updated_node
+
+
 class MakeModalCommand(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Replace built-in method MAkeModal with helper"

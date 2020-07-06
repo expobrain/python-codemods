@@ -9,6 +9,7 @@ from codemods.wx_python import (
     FlexGridSizerCommand,
     MakeModalCommand,
     MenuAppendCommand,
+    SizerAddCommand,
     ToolbarAddToolCommand,
 )
 
@@ -211,6 +212,17 @@ class ToolbarAddToolCommandTests(CodemodTest):
             )
             """
         )
+
+        self.assertCodemod(before, after)
+
+
+class SizerAddWindowCommandTests(CodemodTest):
+
+    TRANSFORM = SizerAddCommand
+
+    def test_substitution(self) -> None:
+        before = "sizer.AddWindow(panel, 0, border=0, flag=wx.EXPAND)"
+        after = "sizer.Add(panel, 0, border=0, flag=wx.EXPAND)"
 
         self.assertCodemod(before, after)
 
