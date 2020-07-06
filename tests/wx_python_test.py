@@ -7,6 +7,7 @@ from codemods.wx_python import (
     ConstantsRenameCommand,
     FixImportFromAdvCommand,
     FlexGridSizerCommand,
+    MenuAppendCommand,
 )
 
 
@@ -152,5 +153,34 @@ class FlexGridSizerCommandTests(CodemodTest):
     def test_substitution(self) -> None:
         before = "wx.FlexGridSizer(1, 0)"
         after = "wx.FlexGridSizer(1, 0, 0)"
+
+        self.assertCodemod(before, after)
+
+
+class MenuAppendCommandTests(CodemodTest):
+
+    TRANSFORM = MenuAppendCommand
+
+    def test_substitution(self) -> None:
+        before = textwrap.dedent(
+            """
+            menu.Append(
+                help="",
+                id=1,
+                kind=wx.ITEM_NORMAL,
+                text="Menu item",
+            )
+            """
+        )
+        after = textwrap.dedent(
+            """
+            menu.Append(
+                helpString="",
+                id=1,
+                kind=wx.ITEM_NORMAL,
+                item="Menu item",
+            )
+            """
+        )
 
         self.assertCodemod(before, after)
