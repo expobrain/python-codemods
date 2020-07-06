@@ -136,7 +136,7 @@ class MenuAppendCommand(VisitorBasedCodemodCommand):
 
 class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
 
-    DESCRIPTION: str = "Transforms wx.Toolbar.DoAddTool into method into AddTool"
+    DESCRIPTION: str = "Transforms wx.Toolbar.DoAddTool method into AddTool"
 
     args_map = {"id": "toolId"}
     args_matchers_map = {
