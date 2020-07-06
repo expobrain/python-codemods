@@ -8,6 +8,7 @@ from codemods.wx_python import (
     FixImportFromAdvCommand,
     FlexGridSizerCommand,
     MenuAppendCommand,
+    ToolbarAddToolCommand,
 )
 
 
@@ -179,6 +180,33 @@ class MenuAppendCommandTests(CodemodTest):
                 id=1,
                 kind=wx.ITEM_NORMAL,
                 item="Menu item",
+            )
+            """
+        )
+
+        self.assertCodemod(before, after)
+
+
+class ToolbarAddToolCommandTests(CodemodTest):
+
+    TRANSFORM = ToolbarAddToolCommand
+
+    def test_substitution(self) -> None:
+        before = textwrap.dedent(
+            """
+            toolbar.DoAddTool(
+                bitmap=my_bitmap,
+                id=1,
+                label="Toolbar tool"
+            )
+            """
+        )
+        after = textwrap.dedent(
+            """
+            toolbar.AddTool(
+                bitmap=my_bitmap,
+                toolId=1,
+                label="Toolbar tool"
             )
             """
         )

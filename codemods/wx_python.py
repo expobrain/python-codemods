@@ -131,3 +131,45 @@ class MenuAppendCommand(VisitorBasedCodemodCommand):
                 updated_node = updated_node.with_changes(args=updated_node_args)
 
         return updated_node
+
+
+class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Transforms wx.Toolbar.DoAddTool into method into AddTool"
+
+    args_map = {"id": "toolId"}
+    args_matchers_map = {
+        matchers.Arg(keyword=matchers.Name(value=value)): renamed
+        for value, renamed in args_map.items()
+    }
+    call_matcher = matchers.Call(
+        func=matchers.Attribute(attr=matchers.Name(value="DoAddTool")),
+        args=matchers.MatchIfTrue(
+            lambda args: bool(
+                set(arg.keyword.value for arg in args if arg and arg.keyword).intersection(
+                    ToolbarAddToolCommand.args_map.keys()
+                )
+            )
+        ),
+    )
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        if matchers.matches(updated_node, self.call_matcher):
+            # Update method's call
+            updated_node = updated_node.with_changes(
+                func=updated_node.func.with_changes(attr=cst.Name(value="AddTool"))
+            )
+
+            # Transform keywords
+            updated_node_args = list(updated_node.args)
+
+            for arg_matcher, renamed in self.args_matchers_map.items():
+                for i, node_arg in enumerate(updated_node.args):
+                    if matchers.matches(node_arg, arg_matcher):
+                        updated_node_args[i] = node_arg.with_changes(
+                            keyword=cst.Name(value=renamed)
+                        )
+
+                updated_node = updated_node.with_changes(args=updated_node_args)
+
+        return updated_node
