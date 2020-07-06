@@ -192,6 +192,21 @@ class SizerAddCommand(VisitorBasedCodemodCommand):
         return updated_node
 
 
+class ListCtrlInsertColumnCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Transforms wx.ListCtrl.InsertColumnInfo method into InsertColumn"
+
+    matcher = matchers.Call(func=matchers.Attribute(attr=matchers.Name(value="InsertColumnInfo")))
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        if matchers.matches(updated_node, self.matcher):
+            return updated_node.with_changes(
+                func=updated_node.func.with_changes(attr=cst.Name(value="InsertColumn"))
+            )
+
+        return updated_node
+
+
 class MakeModalCommand(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Replace built-in method MAkeModal with helper"

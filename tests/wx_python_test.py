@@ -7,6 +7,7 @@ from codemods.wx_python import (
     ConstantsRenameCommand,
     FixImportFromAdvCommand,
     FlexGridSizerCommand,
+    ListCtrlInsertColumnCommand,
     MakeModalCommand,
     MenuAppendCommand,
     SizerAddCommand,
@@ -218,6 +219,17 @@ class ToolbarAddToolCommandTests(CodemodTest):
             )
             """
         )
+
+        self.assertCodemod(before, after)
+
+
+class ListCtrlInsertColumnCommandTests(CodemodTest):
+
+    TRANSFORM = ListCtrlInsertColumnCommand
+
+    def test_substitution(self) -> None:
+        before = "self.InsertColumnInfo(0, info)"
+        after = "self.InsertColumn(0, info)"
 
         self.assertCodemod(before, after)
 
