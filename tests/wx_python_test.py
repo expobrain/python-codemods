@@ -5,6 +5,7 @@ from libcst.codemod import CodemodTest
 from codemods.wx_python import (
     ColorToColourCommand,
     ConstantsRenameCommand,
+    DeprecationWarningsCommand,
     FixImportFromAdvCommand,
     FlexGridSizerCommand,
     ListCtrlInsertColumnCommand,
@@ -230,6 +231,35 @@ class ListCtrlInsertColumnCommandTests(CodemodTest):
     def test_substitution(self) -> None:
         before = "self.InsertColumnInfo(0, info)"
         after = "self.InsertColumn(0, info)"
+
+        self.assertCodemod(before, after)
+
+
+class DeprecationWarningsCommandTests(CodemodTest):
+
+    TRANSFORM = DeprecationWarningsCommand
+
+    def test_substitution(self) -> None:
+        before = "wx.BitmapFromImage()"
+        after = "wx.Bitmap()"
+
+        self.assertCodemod(before, after)
+
+    def test_imported_symbols_substitution(self) -> None:
+        before = textwrap.dedent(
+            """
+            from wx import BitmapFromImage
+
+            BitmapFromImage()
+            """
+        )
+        after = textwrap.dedent(
+            """
+            import wx
+
+            wx.Bitmap()
+            """
+        )
 
         self.assertCodemod(before, after)
 

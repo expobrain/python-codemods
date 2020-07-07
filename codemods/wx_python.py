@@ -1,10 +1,14 @@
 from ast import literal_eval
-from typing import List, Optional, Union
+from typing import List, Optional, Set, Union
 import textwrap
 
 from libcst import matchers
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
-from libcst.codemod.visitors import AddImportsVisitor
+from libcst.codemod.visitors import (
+    AddImportsVisitor,
+    GatherImportsVisitor,
+    RemoveImportsVisitor,
+)
 import libcst as cst
 
 
@@ -204,6 +208,71 @@ class ListCtrlInsertColumnCommand(VisitorBasedCodemodCommand):
                 func=updated_node.func.with_changes(attr=cst.Name(value="InsertColumn"))
             )
 
+        return updated_node
+
+
+class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
+
+    DESCRIPTION: str = "Rename deprecated methods"
+
+    deprecated_symbols_map = [
+        ("BitmapFromImage", "Bitmap"),
+        ("ImageFromStream", "Image"),
+        ("EmptyIcon", "Icon"),
+    ]
+    matchers_short_map = {
+        (value, matchers.Call(func=matchers.Name(value=value)), renamed)
+        for value, renamed in deprecated_symbols_map
+    }
+    matchers_full_map = {
+        (
+            matchers.Call(
+                func=matchers.Attribute(
+                    value=matchers.Name(value="wx"), attr=matchers.Name(value=value)
+                )
+            ),
+            renamed,
+        )
+        for value, renamed in deprecated_symbols_map
+    }
+
+    def __init__(self, context: CodemodContext):
+        super().__init__(context)
+
+        self.wx_imports: Set[str] = set()
+
+    def visit_Module(self, node: cst.Module):
+        # Collect current list of imports
+        gatherer = GatherImportsVisitor(self.context)
+
+        node.visit(gatherer)
+
+        # Store list of symbols imported from wx package
+        self.wx_imports = gatherer.object_mapping.get("wx", set())
+
+    def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        # Matches calls with symbols only without the wx prefix
+        for symbol, matcher, renamed in self.matchers_short_map:
+            if symbol in self.wx_imports and matchers.matches(updated_node, matcher):
+                # Remove the symbol's import
+                RemoveImportsVisitor.remove_unused_import_by_node(self.context, original_node)
+
+                # Add import of top level wx package
+                AddImportsVisitor.add_needed_import(self.context, "wx")
+
+                # Return updated node
+                return updated_node.with_changes(
+                    func=cst.Attribute(value=cst.Name(value="wx"), attr=cst.Name(value=renamed))
+                )
+
+        # Matches full calls like wx.MySymbol
+        for matcher, renamed in self.matchers_full_map:
+            if matchers.matches(updated_node, matcher):
+                return updated_node.with_changes(
+                    func=updated_node.func.with_changes(attr=cst.Name(value=renamed))
+                )
+
+        # Returns updated node
         return updated_node
 
 
