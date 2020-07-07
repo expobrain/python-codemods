@@ -1,5 +1,5 @@
 from ast import literal_eval
-from typing import List, Optional, Set, Union
+from typing import List, Optional, Set, Tuple, Union
 import textwrap
 
 from libcst import matchers
@@ -226,10 +226,11 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
 
     DESCRIPTION: str = "Rename deprecated methods"
 
-    deprecated_symbols_map = [
+    deprecated_symbols_map: List[Tuple[str, Union[str, Tuple[str, str]]]] = [
         ("BitmapFromImage", "Bitmap"),
         ("ImageFromStream", "Image"),
         ("EmptyIcon", "Icon"),
+        ("DateTimeFromDMY", ("DateTime", "FromDMY")),
     ]
     matchers_short_map = {
         (value, matchers.Call(func=matchers.Name(value=value)), renamed)
@@ -262,7 +263,7 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
         self.wx_imports = gatherer.object_mapping.get("wx", set())
 
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
-        # Matches calls with symbols only without the wx prefix
+        # Matches calls with symbols without the wx prefix
         for symbol, matcher, renamed in self.matchers_short_map:
             if symbol in self.wx_imports and matchers.matches(updated_node, matcher):
                 # Remove the symbol's import
@@ -272,6 +273,16 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
                 AddImportsVisitor.add_needed_import(self.context, "wx")
 
                 # Return updated node
+                if isinstance(renamed, tuple):
+                    return updated_node.with_changes(
+                        func=cst.Attribute(
+                            value=cst.Attribute(
+                                value=cst.Name(value="wx"), attr=cst.Name(value=renamed[0])
+                            ),
+                            attr=cst.Name(value=renamed[1]),
+                        )
+                    )
+
                 return updated_node.with_changes(
                     func=cst.Attribute(value=cst.Name(value="wx"), attr=cst.Name(value=renamed))
                 )
@@ -279,6 +290,17 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
         # Matches full calls like wx.MySymbol
         for matcher, renamed in self.matchers_full_map:
             if matchers.matches(updated_node, matcher):
+
+                if isinstance(renamed, tuple):
+                    return updated_node.with_changes(
+                        func=cst.Attribute(
+                            value=cst.Attribute(
+                                value=cst.Name(value="wx"), attr=cst.Name(value=renamed[0])
+                            ),
+                            attr=cst.Name(value=renamed[1]),
+                        )
+                    )
+
                 return updated_node.with_changes(
                     func=updated_node.func.with_changes(attr=cst.Name(value=renamed))
                 )

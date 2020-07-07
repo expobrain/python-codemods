@@ -257,6 +257,12 @@ class DeprecationWarningsCommandTests(CodemodTest):
 
         self.assertCodemod(before, after)
 
+    def test_substitution_with_tuple(self) -> None:
+        before = "wx.DateTimeFromDMY(*args)"
+        after = "wx.DateTime.FromDMY(*args)"
+
+        self.assertCodemod(before, after)
+
     def test_imported_symbols_substitution(self) -> None:
         before = textwrap.dedent(
             """
