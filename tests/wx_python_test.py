@@ -172,7 +172,7 @@ class MenuAppendCommandTests(CodemodTest):
 
     TRANSFORM = MenuAppendCommand
 
-    def test_substitution(self) -> None:
+    def test_keywords_substitution(self) -> None:
         before = textwrap.dedent(
             """
             menu.Append(
@@ -193,6 +193,18 @@ class MenuAppendCommandTests(CodemodTest):
             )
             """
         )
+
+        self.assertCodemod(before, after)
+
+    def test_deprecated_method_substitution(self) -> None:
+        before = "menu.AppendItem(menu_item)"
+        after = "menu.Append(menu_item)"
+
+        self.assertCodemod(before, after)
+
+    def test_deprecated_method_substitution_skip_other_signatures(self) -> None:
+        before = "menu.AppendItem(parent, text, image=-1, selImage=-1, data=None)"
+        after = "menu.AppendItem(parent, text, image=-1, selImage=-1, data=None)"
 
         self.assertCodemod(before, after)
 

@@ -105,7 +105,7 @@ class FlexGridSizerCommand(VisitorBasedCodemodCommand):
 
 class MenuAppendCommand(VisitorBasedCodemodCommand):
 
-    DESCRIPTION: str = "Rename arguments for wx.menu.Append() method"
+    DESCRIPTION: str = "Migrate to wx.MenuAppend() method and update keywords"
 
     args_map = {"help": "helpString", "text": "item"}
     args_matchers_map = {
@@ -122,8 +122,19 @@ class MenuAppendCommand(VisitorBasedCodemodCommand):
             )
         ),
     )
+    deprecated_call_matcher = matchers.Call(
+        func=matchers.Attribute(attr=matchers.Name(value="AppendItem")),
+        args=[matchers.DoNotCare()],
+    )
 
     def leave_Call(self, original_node: cst.Call, updated_node: cst.Call) -> cst.Call:
+        # Migrate form deprecated method AppendItem()
+        if matchers.matches(updated_node, self.deprecated_call_matcher):
+            updated_node = updated_node.with_changes(
+                func=updated_node.func.with_changes(attr=cst.Name(value="Append"))
+            )
+
+        # Update keywords
         if matchers.matches(updated_node, self.call_matcher):
             updated_node_args = list(updated_node.args)
 
