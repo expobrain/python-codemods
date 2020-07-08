@@ -1,5 +1,4 @@
-from ast import literal_eval
-from typing import List, Optional, Set, Tuple, Union
+from typing import List, Set, Tuple, Union
 import textwrap
 
 from libcst import matchers
