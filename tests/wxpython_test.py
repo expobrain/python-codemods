@@ -2,7 +2,7 @@ import textwrap
 
 from libcst.codemod import CodemodTest
 
-from codemods.wx_python import (
+from codemods.wxpython import (
     ColorToColourCommand,
     ConstantsRenameCommand,
     DeprecationWarningsCommand,
