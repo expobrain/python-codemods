@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/expobrain/python-codemods.svg?branch=master)](https://travis-ci.org/expobrain/python-codemods)
+
 # Python codemods
 
 This is a collection of codemods for Python packages basedon on [LibCST](https://github.com/Instagram/LibCST/).
