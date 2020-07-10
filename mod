@@ -1,4 +1,6 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
+
+cd "$(dirname "$0")"
 
 command=$1
 source_paths=${@:2}
