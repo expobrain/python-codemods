@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/expobrain/python-codemods.svg?branch=master)](https://travis-ci.org/expobrain/python-codemods)
+[![Unit testing, formatting & linting](https://github.com/expobrain/python-codemods/actions/workflows/test.yml/badge.svg)](https://github.com/expobrain/python-codemods/actions/workflows/test.yml)
 
 # Python codemods
 
