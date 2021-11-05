@@ -26,7 +26,7 @@ This is a collection of codemods for Python packages basedon on [LibCST](https:/
 Codemods are based on [LibCST](https://github.com/Instagram/LibCST/), it will be installed by running:
 
 ```shell
-pip install -r requirements.txt
+poetry install
 ```
 
 ## Run the codemods
@@ -42,8 +42,7 @@ To run the codemods a small shell script `mod` is provided for convenience:
 Tests are executed using [Pytest](https://docs.pytest.org/) which will be installed as dev requirements:
 
 ```shell
-pip install -r requirements_dev.txt
-pytest
+make test
 ```
 
 ## Mypy's useful codemods
