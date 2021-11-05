@@ -1,11 +1,46 @@
 [tool.black]
 line-length = 99
-target-version = ["py38"]
+target-version = ["py36", "py37", "py38", "py39"]
 exclude = '''
 /(
-    \.git|.venv
+    \.git|venv|.venv
 )/
 '''
 
 [tool.isort]
-from_first = true
+profile = "black"
+float_to_top = true
+line_length = 79
+skip_glob = ".venv,venv"
+
+[tool.poetry]
+name = "python-codemods"
+version = "0.1.0"
+description = ""
+authors = ["Daniele Esposti"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+libcst = "^0.3.21"
+
+[tool.poetry.dev-dependencies]
+black = "^21.10b0"
+flake8 = "^4.0.1"
+isort = "^5.10.0"
+mypy = "^0.910"
+pdbpp = "^0.10.3"
+pytest = "^6.2.5"
+autoflake = "^1.4"
+pytest-cov = "^3.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+exclude = ".venv/"
+check_untyped_defs = true
+disallow_incomplete_defs = true
+warn_unused_configs = true
+warn_unused_ignores = true

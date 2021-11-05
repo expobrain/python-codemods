@@ -1,6 +1,7 @@
-from typing import List, Set, Tuple, Union
 import textwrap
+from typing import List, Set, Tuple, Union
 
+import libcst as cst
 from libcst import matchers
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
 from libcst.codemod.visitors import (
@@ -8,7 +9,6 @@ from libcst.codemod.visitors import (
     GatherImportsVisitor,
     RemoveImportsVisitor,
 )
-import libcst as cst
 
 
 class ColorToColourCommand(VisitorBasedCodemodCommand):
@@ -252,7 +252,7 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
 
         self.wx_imports: Set[str] = set()
 
-    def visit_Module(self, node: cst.Module):
+    def visit_Module(self, node: cst.Module) -> None:
         # Collect current list of imports
         gatherer = GatherImportsVisitor(self.context)
 
@@ -341,7 +341,7 @@ class MakeModalCommand(VisitorBasedCodemodCommand):
 
         self.stack: List[cst.ClassDef] = []
 
-    def visit_ClassDef(self, node: cst.ClassDef):
+    def visit_ClassDef(self, node: cst.ClassDef) -> None:
         self.stack.append(node)
 
     def leave_ClassDef(
