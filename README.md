@@ -7,6 +7,8 @@ This is a collection of codemods for Python packages basedon on [LibCST](https:/
 - [Installation](#Installation)
 - [Run the codemods](#Run_the_codemods)
 - [Run the tests](#Run_the_tests)
+- [Mypy's useful codemods](#Mypy)
+  - [DefaultFunctionReturnTypeCommand](#DefaultFunctionReturnTypeCommand)
 - [wxPython 2.x to 4.x migrations](#wxPython)
   - [ColorToColourCommand](#ColorToColourCommand)
   - [ConstantsRenameCommand](#ConstantsRenameCommand)
@@ -42,6 +44,28 @@ Tests are executed using [Pytest](https://docs.pytest.org/) which will be instal
 ```shell
 pip install -r requirements_dev.txt
 pytest
+```
+
+## Mypy's useful codemods
+
+List of mods useful for migrating to Mypy.
+
+### DefaultFunctionReturnTypeCommand
+
+For each function without a return type adds a default `None` return type; useful when during the introduction of Mypy a lot of functions are missing the return type and adding it by hand is impratical or inconvenient.
+
+Example of convertion:
+
+```python
+def fn f():
+    pass
+```
+
+into:
+
+```python
+def f() -> None:
+    pass
 ```
 
 ## wxPython 2.x to 4.x migrations
