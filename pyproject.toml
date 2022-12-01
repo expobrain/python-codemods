@@ -22,7 +22,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-libcst = "^0.4.7"
+libcst = "^0.4.9"
 
 [tool.poetry.dev-dependencies]
 black = "^22.10"
