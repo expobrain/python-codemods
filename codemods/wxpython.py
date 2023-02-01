@@ -12,7 +12,6 @@ from libcst.codemod.visitors import (
 
 
 class ColorToColourCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Converts usage of wx.Color into wx.Colour"
 
     matcher = matchers.Attribute(
@@ -29,7 +28,6 @@ class ColorToColourCommand(VisitorBasedCodemodCommand):
 
 
 class ConstantsRenameCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Rename constants"
 
     matchers_map = {
@@ -58,7 +56,6 @@ class ConstantsRenameCommand(VisitorBasedCodemodCommand):
 
 
 class FixImportFromAdvCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Fix importing symbols now moved into wx.adv package"
 
     matchers = [
@@ -83,7 +80,6 @@ class FixImportFromAdvCommand(VisitorBasedCodemodCommand):
 
 
 class FlexGridSizerCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Updates wx.FlexGridSize constructor's calls"
 
     matcher = matchers.Call(
@@ -103,7 +99,6 @@ class FlexGridSizerCommand(VisitorBasedCodemodCommand):
 
 
 class MenuAppendCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Migrate to wx.MenuAppend() method and update keywords"
 
     args_map = {"help": "helpString", "text": "item"}
@@ -150,7 +145,6 @@ class MenuAppendCommand(VisitorBasedCodemodCommand):
 
 
 class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Transforms wx.Toolbar.DoAddTool method into AddTool"
 
     args_map = {"id": "toolId"}
@@ -192,7 +186,6 @@ class ToolbarAddToolCommand(VisitorBasedCodemodCommand):
 
 
 class SizerAddCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Transforms wx.Sizer.AddWindow method into Add"
 
     matcher = matchers.Call(func=matchers.Attribute(attr=matchers.Name(value="AddWindow")))
@@ -207,7 +200,6 @@ class SizerAddCommand(VisitorBasedCodemodCommand):
 
 
 class ListCtrlInsertColumnCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Transforms wx.ListCtrl.InsertColumnInfo method into InsertColumn"
 
     matcher = matchers.Call(func=matchers.Attribute(attr=matchers.Name(value="InsertColumnInfo")))
@@ -222,7 +214,6 @@ class ListCtrlInsertColumnCommand(VisitorBasedCodemodCommand):
 
 
 class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Rename deprecated methods"
 
     deprecated_symbols_map: List[Tuple[str, Union[str, Tuple[str, str]]]] = [
@@ -289,7 +280,6 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
         # Matches full calls like wx.MySymbol
         for matcher, renamed in self.matchers_full_map:
             if matchers.matches(updated_node, matcher):
-
                 if isinstance(renamed, tuple):
                     return updated_node.with_changes(
                         func=cst.Attribute(
@@ -309,7 +299,6 @@ class DeprecationWarningsCommand(VisitorBasedCodemodCommand):
 
 
 class MakeModalCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION: str = "Replace built-in method MAkeModal with helper"
 
     method_matcher = matchers.FunctionDef(

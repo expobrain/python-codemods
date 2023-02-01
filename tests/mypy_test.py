@@ -4,7 +4,6 @@ from codemods.mypy import DefaultFunctionReturnTypeCommand
 
 
 class ColorToColourCommandTests(CodemodTest):
-
     TRANSFORM = DefaultFunctionReturnTypeCommand
 
     def test_add_return_type_if_missing(self) -> None:

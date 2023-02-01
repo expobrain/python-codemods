@@ -17,7 +17,6 @@ from codemods.wxpython import (
 
 
 class ColorToColourCommandTests(CodemodTest):
-
     TRANSFORM = ColorToColourCommand
 
     def test_call_substitution(self) -> None:
@@ -34,7 +33,6 @@ class ColorToColourCommandTests(CodemodTest):
 
 
 class ConstantsRenameCommandTests(CodemodTest):
-
     TRANSFORM = ConstantsRenameCommand
 
     def test_WXK_PRIOR_substitution(self) -> None:
@@ -81,7 +79,6 @@ class ConstantsRenameCommandTests(CodemodTest):
 
 
 class FixImportFromAdvCommandTests(CodemodTest):
-
     TRANSFORM = FixImportFromAdvCommand
 
     def test_add_import_once_substitution(self) -> None:
@@ -152,7 +149,6 @@ class FixImportFromAdvCommandTests(CodemodTest):
 
 
 class FlexGridSizerCommandTests(CodemodTest):
-
     TRANSFORM = FlexGridSizerCommand
 
     def test_no_op(self) -> None:
@@ -169,7 +165,6 @@ class FlexGridSizerCommandTests(CodemodTest):
 
 
 class MenuAppendCommandTests(CodemodTest):
-
     TRANSFORM = MenuAppendCommand
 
     def test_keywords_substitution(self) -> None:
@@ -210,7 +205,6 @@ class MenuAppendCommandTests(CodemodTest):
 
 
 class ToolbarAddToolCommandTests(CodemodTest):
-
     TRANSFORM = ToolbarAddToolCommand
 
     def test_substitution(self) -> None:
@@ -237,7 +231,6 @@ class ToolbarAddToolCommandTests(CodemodTest):
 
 
 class ListCtrlInsertColumnCommandTests(CodemodTest):
-
     TRANSFORM = ListCtrlInsertColumnCommand
 
     def test_substitution(self) -> None:
@@ -248,7 +241,6 @@ class ListCtrlInsertColumnCommandTests(CodemodTest):
 
 
 class DeprecationWarningsCommandTests(CodemodTest):
-
     TRANSFORM = DeprecationWarningsCommand
 
     def test_substitution(self) -> None:
@@ -283,7 +275,6 @@ class DeprecationWarningsCommandTests(CodemodTest):
 
 
 class SizerAddWindowCommandTests(CodemodTest):
-
     TRANSFORM = SizerAddCommand
 
     def test_substitution(self) -> None:
@@ -294,7 +285,6 @@ class SizerAddWindowCommandTests(CodemodTest):
 
 
 class MakeModalCommandTests(CodemodTest):
-
     TRANSFORM = MakeModalCommand
 
     def test_substitution(self) -> None:
