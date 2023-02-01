@@ -4,7 +4,6 @@ from libcst.codemod import VisitorBasedCodemodCommand
 
 
 class DefaultFunctionReturnTypeCommand(VisitorBasedCodemodCommand):
-
     DESCRIPTION = "Adds a default return type of None for functions without a return type"
 
     matcher = matchers.FunctionDef(returns=None)
