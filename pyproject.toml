@@ -30,7 +30,7 @@ flake8 = "^5.0.4"
 isort = "<5.12"
 mypy = "^1.4"
 pdbpp = "^0.10.3"
-pytest = "^7.4.0"
+pytest = "^7.4.2"
 autoflake = "^1.7"
 pytest-cov = "^4.1.0"
 
